@@ -1,2 +1,2 @@
-# challenges
-A repo for all the challenge problems I use to prepare for interviews
+# LeetCode
+A repo for all the LeetCode problems I use to prepare for interviews
