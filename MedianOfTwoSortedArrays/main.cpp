@@ -7,110 +7,67 @@ class Solution {
 public:
     double findMedianSortedArrays(std::vector<int>& nums1, std::vector<int>& nums2)
     {
-        std::vector<int>& A = nums1;
-        std::vector<int>& B = nums2;
-
-        if (A.size() == 0)
-        {
-            if (B.size() % 2 == 1)
-            {
-                return B[(B.size() / 2)];
-            }
-            else
-            {
-                return (B[(B.size() / 2) - 1] + B[(B.size() / 2)]) / 2.0;
-            }
-        }
-        else if (B.size() == 0)
-        {
-            if (A.size() % 2 == 1)
-            {
-                return A[(A.size() / 2)];
-            }
-            else
-            {
-                return (A[(A.size() / 2) - 1] + A[(A.size() / 2)]) / 2.0;
-            }
-        }
-
-
+        
         if (nums1.size() > nums2.size())
         {
-            B = nums1;
-            A = nums2;
+            return findMedianSortedArrays(nums2, nums1); 
         }
 
-        int total {static_cast<int>(A.size() + B.size())};
-        int half {total / 2};
+        int aSize{static_cast<int>(nums1.size())};
+        int bSize{static_cast<int>(nums2.size())};
+        int aMinValidItems{0};
+        int aMaxValidItems{aSize};
 
-        int l {0};
-        int r {static_cast<int>(A.size() - 1)};
-
-        while (true)
+        //Edge case for empty arrays
+        if (nums1.empty())
         {
-            int i = (l + r) / 2;    // For array A
-            int j = half - i - 2;   // For array B
-
-            int Aleft;
-            if (i < 0)
+            if ((aSize + bSize) == 1)
             {
-                Aleft = std::numeric_limits<int>::min();
+                return nums2[0];
+            }
+            else if ((aSize + bSize) % 2 == 0)
+            {
+                return (nums2[bSize / 2] + nums2[(bSize / 2) - 1]) / 2.0;
             }
             else
             {
-                Aleft = A[i];
+                return nums2[bSize / 2];
             }
+        }
 
-            int Aright;
-            if ((i + 1) > (static_cast<int>(A.size() - 1)))
-            {
-                Aright = std::numeric_limits<int>::max();
-            }
-            else
-            {
-                Aright = A[i +1];
-            }
+        while (aMinValidItems <= aMaxValidItems)
+        {
+            int aCutIndex = (aMinValidItems+aMaxValidItems) / 2;
+            int bCutIndex = ((aSize + bSize + 1) / 2) - aCutIndex;
 
-            int Bleft;
-            if (j < 0)
-            {
-                Bleft = std::numeric_limits<int>::min();
-            }
-            else
-            {
-                Bleft = B[j];
-            }
+            int aLeftVal = (aCutIndex == 0) ? INT_MIN : nums1[aCutIndex-1];
+            int bLeftVal = (bCutIndex == 0) ? INT_MIN : nums2[bCutIndex-1];
 
-            int Bright;
-            if ((j + 1) > (static_cast<int>(B.size() - 1)))
-            {
-                Bright = std::numeric_limits<int>::max();
-            }
-            else
-            {
-                Bright = B[j + 1];
-            }
+            int aRightVal = (aCutIndex == aSize) ? INT_MAX : nums1[aCutIndex];
+            int bRightVal = (bCutIndex == bSize) ? INT_MAX : nums2[bCutIndex];
 
-            if (Aleft <= Bright && Bleft <= Aright)
+            if (aLeftVal <= bRightVal && bLeftVal <= aRightVal)
             {
-                if (total % 2 == 1)
+                if ((aSize + bSize) % 2 == 0)
                 {
-                    return std::min(Aright, Bright);
+                    return (std::max(aLeftVal, bLeftVal) + std::min(aRightVal, bRightVal)) / 2.0;
                 }
                 else
                 {
-                    return (std::max(Aleft, Bleft) + std::min(Aright, Bright)) / 2.0;
+                    return std::max(aLeftVal, bLeftVal);
                 }
             }
-            else if (Aleft > Bright)
+            else if (aLeftVal > bRightVal)
             {
-                r = i - 1;
+                aMaxValidItems = aCutIndex - 1;
             }
             else
             {
-                l = i + 1;
+                aMinValidItems = aCutIndex + 1;
             }
         }
+
+        return 0.0;
     }
 };
 
@@ -120,10 +77,19 @@ public:
 
 int main()
 {
-    std::vector<int> A {3};
-    std::vector<int> B {-2,-1};
-
+    std::vector<int> A {3,3,5,5,6,9,13};
+    std::vector<int> B {1,1,3,3,5,8,8,9,9,11};
     Solution sol;
+
+    std::cout << sol.findMedianSortedArrays(A, B) << std::endl;
+
+    A = {1,2,3};
+    B = {1,2,3,4,5,6,6,7,8,8,9};
+
+    std::cout << sol.findMedianSortedArrays(A, B) << std::endl;
+
+    A = {};
+    B = {1,2,3};
 
     std::cout << sol.findMedianSortedArrays(A, B) << std::endl;
 
