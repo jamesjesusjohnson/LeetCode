@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cmath>
 
-int digitsInInteger(int num);
-int reverseInteger(int num);
+const int MIN_DIGITS_FOR_OVER_UNDER_FLOW_CHECK {10};
+
+int numDigitsInInteger(int num);
 int isolateDigitAtPosition(int num, int position);
 bool checkOverUnderflowAddition(int a, int b);
 bool checkOverUnderflowMultiplication(int a, int b);
@@ -12,25 +13,35 @@ class Solution
 public:
     int reverse(int x)
     {
-        int digits {digitsInInteger(x)};
+        int digits {numDigitsInInteger(x)};
         int result {0};
         int multiplier {1};
 
-
-        for (int i {digits - 1}; i > 0; i--)
+        if (digits < MIN_DIGITS_FOR_OVER_UNDER_FLOW_CHECK)
         {
-            result += multiplier * isolateDigitAtPosition(x, i);
-            multiplier *= 10;
-        }
-
-        if ((checkOverUnderflowMultiplication(multiplier, isolateDigitAtPosition(x, 0))) ||
-           (checkOverUnderflowAddition(result, multiplier * isolateDigitAtPosition(x, 0))))
-        {
-            result = 0;
+            for (int i {digits - 1}; i >= 0; i--)
+            {
+                result += multiplier * isolateDigitAtPosition(x, i);
+                multiplier *= 10;
+            }
         }
         else
         {
-            result += multiplier * isolateDigitAtPosition(x, 0);
+            for (int i {digits - 1}; i > 0; i--)
+            {
+                result += multiplier * isolateDigitAtPosition(x, i);
+                multiplier *= 10;
+            }
+
+            if ((checkOverUnderflowMultiplication(multiplier, isolateDigitAtPosition(x, 0))) ||
+                (checkOverUnderflowAddition(result, multiplier * isolateDigitAtPosition(x, 0))))
+            {
+                result = 0;
+            }
+            else
+            {
+                result += multiplier * isolateDigitAtPosition(x, 0);
+            }
         }
 
         return result;
@@ -42,16 +53,20 @@ int main()
 {
     Solution sol {};
 
-    std::cout << INT_MIN << std::endl << std::endl;
+    std::cout << std::endl;
+    std::cout << "The value of INT_MAX is: " << INT_MAX << std::endl;
+    std::cout << "The value of INT_MIN is: " << INT_MIN << std::endl;
+    std::cout << std::endl;
+
 
     int test {12345678};
     int test2 {-12345678};
-    int test3 {INT_MIN};
-    int test4 {1111111119};
+    // int test3 {INT_MIN};
+    int test4 {1234567899};
     
     std::cout << sol.reverse(test) << std::endl;
     std::cout << sol.reverse(test2) << std::endl;
-    std::cout << sol.reverse(test3) << std::endl;
+    // std::cout << sol.reverse(test3) << std::endl;
     std::cout << sol.reverse(test4) << std::endl;
 
     return 0;
@@ -59,7 +74,7 @@ int main()
 
 
 
-int digitsInInteger(int num)
+int numDigitsInInteger(int num)
 {
     int count {0};
 
