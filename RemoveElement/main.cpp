@@ -6,45 +6,23 @@ class Solution
 public:
     int removeElement(std::vector<int> &nums, int val)
     {
-        int k{0};
-        int indexToSwap{static_cast<int>(nums.size() - 1)};
-        bool foundMismatch{false};
+        int indexToWrite{0};
 
-        for (int i{0}; i < static_cast<int>(nums.size()); i++)
+        for (const int &x : nums)
         {
-            if (i > indexToSwap)
+            if (x != val)
             {
-                break;
-            }
-            else if (i == indexToSwap)
-            {
-                if (nums[i] != val)
-                {
-                    k++;
-                    foundMismatch = true;
-                }
-                break;
-            }
-            else if (nums[i] == val)
-            {
-                std::swap(nums[i], nums[indexToSwap]);
-                // nums.erase(nums.begin() + indexToSwap); You could also erase as you go
-                // instead of once at the end using the bool method
-                indexToSwap--;
-                i--;
-            }
-            else
-            {
-                k++;
-                foundMismatch = true;
+                nums[indexToWrite] = x;
+                indexToWrite++;
             }
         }
 
-        if (!foundMismatch)
+        if (indexToWrite == 0)
         {
             nums.clear();
         }
-        return k;
+
+        return indexToWrite;
     }
 };
 
@@ -52,11 +30,8 @@ int main()
 {
     Solution sol{};
 
-    // std::vector<int> vec1{0, 1, 2, 2, 3, 0, 4, 2};
-    // int val{2};
-
-    std::vector<int> vec1{2};
-    int val{3};
+    std::vector<int> vec1{0, 1, 2, 2, 3, 0, 4, 2};
+    int val1{2};
 
     std::cout << "Before removal" << std::endl;
     std::cout << "[ ";
@@ -66,12 +41,32 @@ int main()
     }
     std::cout << ']' << std::endl;
 
-
-    std::cout << "Num elements not equal to " << val << ": " << sol.removeElement(vec1, val) << " elements" << std::endl;
+    std::cout << "Num elements not equal to " << val1 << ": " << sol.removeElement(vec1, val1) << " elements" << std::endl;
 
     std::cout << "After removal" << std::endl;
     std::cout << "[ ";
     for (auto val : vec1)
+    {
+        std::cout << val << ' ';
+    }
+    std::cout << ']' << std::endl;
+
+    std::vector<int> vec2{1};
+    int val2{1};
+
+    std::cout << "Before removal" << std::endl;
+    std::cout << "[ ";
+    for (auto val : vec2)
+    {
+        std::cout << val << ' ';
+    }
+    std::cout << ']' << std::endl;
+
+    std::cout << "Num elements not equal to " << val2 << ": " << sol.removeElement(vec2, val2) << " elements" << std::endl;
+
+    std::cout << "After removal" << std::endl;
+    std::cout << "[ ";
+    for (auto val : vec2)
     {
         std::cout << val << ' ';
     }
