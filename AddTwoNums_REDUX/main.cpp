@@ -25,8 +25,9 @@ class Solution
 public:
     ListNode *addTwoNumbers(ListNode *l1, ListNode *l2)
     {
-        ListNode *newListStart{nullptr};
         ListNode *ptrLongerList{nullptr};
+        ListNode *firstNode{nullptr};
+        ListNode *currentNode{nullptr};
         int sum{l1->val + l2->val};
         bool carry{false};
 
@@ -36,11 +37,8 @@ public:
             sum -= 10;
         }
 
-        ListNode *firstNode = new ListNode(sum);
-        newListStart = firstNode;
-        ListNode *currentNode = firstNode;
-
-        ListNode *newNode {nullptr};
+        firstNode = new ListNode(sum);
+        currentNode = firstNode;
 
         l1 = l1->next;
         l2 = l2->next;
@@ -63,28 +61,20 @@ public:
                 carry = false;
             }
 
-            newNode = new ListNode(sum);
-            currentNode->next = newNode;
-            currentNode = newNode;
+            currentNode->next = new ListNode(sum);
+            currentNode = currentNode->next;
             l1 = l1->next;
             l2 = l2->next;
         }
 
-        // Did we run out of l1 or l2?
-        if (l1 == nullptr)
-        {
-            ptrLongerList = l2;
-        }
-        else
-        {
-            ptrLongerList = l1;
-        }
+        ptrLongerList = (l1 == nullptr) ? l2 : l1;
 
         while (ptrLongerList != nullptr)
         {
+            sum = ptrLongerList->val;
             if (carry)
             {
-                sum = ptrLongerList->val + 1;
+                sum++;
             }
 
             if (sum > 9)
@@ -97,19 +87,18 @@ public:
                 carry = false;
             }
 
-            ListNode *newNode = new ListNode(ptrLongerList->val);
-            currentNode->next = newNode;
-            currentNode = newNode;
+            currentNode->next = new ListNode(sum);
+            currentNode = currentNode->next;
+
             ptrLongerList = ptrLongerList->next;
         }
 
         if (carry)
         {
-            ListNode *newNode = new ListNode(1);
-            currentNode->next = newNode;
+            currentNode->next = new ListNode(1);
         }
 
-        return newListStart;
+        return firstNode;
     }
 };
 
@@ -123,26 +112,39 @@ int main()
     // ListNode l6{9, &l5};
     // ListNode l7{9, &l6};
 
-    ListNode *l1 = new ListNode{9};
-    for (int i{0}; i < 7; i++)
-    {
-        l1 = new ListNode{9, l1};
-    }
-
     // ListNode l8{9};
     // ListNode l9{9, &l4};
     // ListNode l10{9, &l5};
     // ListNode l11{};
 
-    ListNode *l2 = new ListNode{9};
-    for (int i = 0; i < 4; i++)
-    {
-        l2 = new ListNode{9, l2};
-    }
+    // ListNode *l1 = new ListNode{9};
+    // for (int i{0}; i < 6; i++)
+    // {
+    //     l1 = new ListNode{9, l1};
+    // }
+
+    // ListNode *l2 = new ListNode{9};
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     l2 = new ListNode{9, l2};
+    // }
+
+    ListNode *l1 = new ListNode(1);
+    l1->next = new ListNode(8);
+
+    ListNode *l2 = new ListNode(0);
 
     Solution sol;
 
-    sol.addTwoNumbers(l1, l2);
+    ListNode *newList = sol.addTwoNumbers(l1, l2);
+    ListNode *ptrList{newList};
+
+    while (ptrList != nullptr)
+    {
+        std::cout << ptrList->val << "->";
+        ptrList = ptrList->next;
+    }
+    std::cout << "nullptr" << std::endl;
 
     return 0;
 }
